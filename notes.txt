@@ -1,0 +1,22 @@
+
+Bing Liue lexicon citations:
+  Bing Liu, Minqing Hu and Junsheng Cheng. "Opinion Observer: Analyzing
+;       and Comparing Opinions on the Web." Proceedings of the 14th
+;       International World Wide Web conference (WWW-2005), May 10-14,
+;       2005, Chiba, Japan.
+
+
+MPQA subjectivity lexicon:
+http://mpqa.cs.pitt.edu/lexicons/subj_lexicon/
+Theresa Wilson, Janyce Wiebe and Paul Hoffmann (2005). Recognizing Contextual
+Polarity in Phrase-Level Sentiment Analysis. Proceedings of HLT/EMNLP 2005,
+Vancouver, Canada.
+
+Future:
+sentiwordnet
+http://compprag.christopherpotts.net/wordnet.html#sentiwordnet
+http://sentiment.christopherpotts.net/lexicons.html#opinionlexicon
+http://saifmohammad.com/WebPages/lexicons.html
+
+
+envious, enviously, enviousness - exist both in bingliu positive and negative lexicons :O
