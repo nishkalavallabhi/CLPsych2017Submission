@@ -1,0 +1,74 @@
+\documentclass{article}
+
+\addtolength{\headheight}{-3cm}
+\addtolength{\textheight}{7cm}
+\addtolength{\oddsidemargin}{-2cm}
+\addtolength{\textwidth}{4cm}
+
+\parindent0cm
+
+\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+
+\pagestyle{empty}
+
+\newcommand{\abox}{\raisebox{.6ex}[0ex][0ex]{\fbox{\phantom{\rule{.8ex}{.8ex}}}}}
+
+\begin{document}
+
+CLPsych Shared Task 2017 - Submission from team \textit{vbsisu}
+\\  Author: Sowmya Vajjala
+\\ Iowa State University, USA
+
+\section{Data pre-processing}
+only tokenization
+
+\section{Features explored}
+
+\begin{enumerate}
+\item Word Ngrams: 1--3 trigrams, lowercased, unstemmed, punctuation markers removed.
+\item Document embeddings: 20-100 dimensions were explored, but submitted runs had 30 dimensions. 
+embeddings were trained on full data provided with training data, and negative sampling was not used so that infer\_vector will give consistent values for the embedding dimensions. 
+embeddings for both training and test data were also obtained using these inferred vectors. test
+
+\item Other features: (addFeatures, KnowYourData python files)
+
+\item New lexicon features: (addLexiconFeatures.py file)
+\end{enumerate}
+
+\section{Experimental setup}
+Learning algorithms:
+
+Sampling:
+
+\section{Runs description}
+\begin{table}[h!]
+\begin{center}
+
+\begin{tabular}{|c|c|l|c|}
+\hline
+\textbf Run & \textbf {Features} & \textbf {Learner} & \textbf{Oversampled or Balanced Weights} \\
+\hline
+\hline Run 1 &  (3) & Random Forests, 10 trees, 5 features per tree & Oversampled \\
+\hline Run 2 & (3) & SMO & Oversampled \\
+\hline Run 3 & (1) + (3) & Random Forests, 100 trees & Oversampled \\
+\hline Run 4 & (1) + (3) &SMO & Oversampled \\
+\hline Run 5 & (2) + (3) & Logistic Regression & Balanced Weights \\
+\hline Run 6 & (2) + (3) & SVM & Balanced Weights\\
+\hline Run 7 & (2) + (3) & Ridge classifier & Balanced Weights\\
+\hline Run 8 & (2) + (3) + (4) & Logistic Regression & Balanced Weights \\
+\hline Run 9 & (2) + (3) + (4)  & SVC & Balanced Weights\\
+\hline Run 10 & (2) + (3) + (4) & Ridge classifier & Balanced Weights \\
+\hline
+\end{tabular}
+\caption{Run Descriptions}
+\end{center}
+
+Code is hosted at: 
+
+\end{table}
+
+
+\section{Main Results}
+
+\end{document}
