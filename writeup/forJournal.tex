@@ -9,6 +9,7 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{setspace}
+\usepackage{url}
 
 \pagestyle{empty}
 
@@ -20,39 +21,43 @@ CLPsych Shared Task 2017 - Submission from team \textit{vbsisu}
 \\  Author: Sowmya Vajjala
 \\ Iowa State University, USA
 
-\section{Data pre-processing}
-only tokenization
+\paragraph{Summary: } I explored feature representations that involved word n-grams, document embeddings, sentiment lexicons and sentiment analysis, and certain basic features from the post meta data. In terms of modeling the data, apart from comparing multiple classification algorithms, considering the unbalanced nature of the dataset, I explored the usefulness of both oversampling and weight balanced classification.
 
-\section{Features explored}
-
+\section{Experimental Setup}
+\paragraph{Features: }
 \begin{enumerate}
 \item Word Ngrams: 1--3 trigrams, lowercased, unstemmed, punctuation markers removed.
-\item Document embeddings: 20-100 dimensions were explored, but submitted runs had 30 dimensions. 
-embeddings were trained on full data provided with training data, and negative sampling was not used so that infer\_vector will give consistent values for the embedding dimensions. 
-embeddings for both training and test data were also obtained using these inferred vectors. test
-
-\item Other features: (addFeatures, KnowYourData python files)
-
-\item New lexicon features: (addLexiconFeatures.py file)
+\item Document embeddings: 20-100 dimensions were explored, but submitted runs had 30 dimensions.  Embeddings were trained on full data provided with training data, and negative sampling was not used so that infer\_vector will give consistent values for the embedding dimensions.  Vectors for both training and test data were obtained using these inferred vectors from the trained embeddings. 
+\item Basic set of features:
+\begin{enumerate}
+\item Features from the post metadata: board\_type, author\_type, author\_ranking.
+\item Other features: number of sentences, words per sentences, sentiment scores per sentence from TextBlob sentiment extractor\footnote{\url{https://pypi.python.org/pypi/textblob}} (mean, median, sum, minimum), percentage of positive, negative and neutral sentiments. 
 \end{enumerate}
+\item Features from sentiment lexicons: 
+\begin{itemize}
+\item fraction of positive and negative sentiment words in the post by using MPQA Subjectivity Lexicon \cite{Wilson.Wiebe.ea-05}\footnote{\url{http://mpqa.cs.pitt.edu/lexicons/subj_lexicon/}} and from the sentiment words list by \cite{Liu.Hu.ea-05}. 
+\item total words with positive and negative sentiment, using the lexicon from \cite{Hamilton.Clark.ea-16}
+\end{itemize}
+\end{enumerate}
+Note: Except tokenization, and lowercasing, no other pre-processing was performed on the data.
 
-\section{Experimental setup}
-Learning algorithms:
+\paragraph{Learning Algorithms: }
+A range of classification algorithms have been explored using the scikit-learn\cite{Pedregosa.Varoquaux.ea-11} Python library- logistic regression, different implementations of SVMs, Stochastic Gradient Descent classifier, Perceptron classifier, Random forests, and KNNs. For all the classifiers, class\_weight="balanced" option was also  explored along with the regular setting, since our dataset is unbalanced across the 4 categories.  
 
-Sampling:
+\paragraph{Over Sampling: } Apart from the weight balanced classification, oversampling was also considered. Two methods of over-sampling: SMOTE \cite{Chawla.Bowyer.ea-02} and Resample algorithms were explored. 
 
 \section{Runs description}
+A total of 10 runs were submitted for evaluation with test data, choosing the experimental settings that worked the best on a stratified 10 fold cross validation of the dataset during evaluation. Table~\ref{tab:Table1} lists all the runs with their experimental settings. 
 \begin{table}[h!]
 \begin{center}
-
 \begin{tabular}{|c|c|l|c|}
 \hline
 \textbf Run & \textbf {Features} & \textbf {Learner} & \textbf{Oversampled or Balanced Weights} \\
 \hline
-\hline Run 1 &  (3) & Random Forests, 10 trees, 5 features per tree & Oversampled \\
-\hline Run 2 & (3) & SMO & Oversampled \\
-\hline Run 3 & (1) + (3) & Random Forests, 100 trees & Oversampled \\
-\hline Run 4 & (1) + (3) &SMO & Oversampled \\
+\hline Run 1 &  (3) & Random Forests, 10 trees, 5 features per tree & Oversampled - SMOTE \\
+\hline Run 2 & (3) & SMO & Oversampled - SMOTE \\
+\hline Run 3 & (1) + (3) & Random Forests, 100 trees & Oversampled - SMOTE\\
+\hline Run 4 & (1) + (3) &SMO & Oversampled - SMOTE \\
 \hline Run 5 & (2) + (3) & Logistic Regression & Balanced Weights \\
 \hline Run 6 & (2) + (3) & SVM & Balanced Weights\\
 \hline Run 7 & (2) + (3) & Ridge classifier & Balanced Weights\\
@@ -62,13 +67,18 @@ Sampling:
 \hline
 \end{tabular}
 \caption{Run Descriptions}
+\label{tab:Table1}
 \end{center}
-
-Code is hosted at: 
-
 \end{table}
 
+\section{Main Results:}
+Among all the 10 submitted runs described above, Run 9, which had all features except word n-grams, achieved the best performance considering all classes separately (38.8\% macro-F1) and for urgent (crisis, red) vs. non-urgent (green, amber) classification (0.599 macro-F1).  Run 6 submission, which did not have features from sentiment lexicons and word n-grams performed the be in identifying flagged (crisis, red, amber) vs unflagged (green), achieving a macro-F1 of 83.4\%. Run 10 which differed from Run 9 only in terms of the classifier used (Ridge classifier) performed the best for identifying crisis category, and was among the top 5 teams for that classification (macro F1: 41.2\%)\footnote{Code for the experiments will be uploaded on github for replication.}.  
 
-\section{Main Results}
+Runs 1--3 did generally poorly in terms of identifying \textit{crisis, red} and slightly better with \textit{amber}. Run 4 was slightly better in terms of identifying posts that required urgent attention (62.5\% precision), and was the best for crisis category (50\% precision) among all the submitted runs. It has to be noted that all the 4 runs used oversampled version of the dataset and with n-gram features. In the cross-validation experiments with training data, document embeddings were only marginally better than word n-grams and document embeddings were eventually chosen over ngrams for the subsequent runs since they are more compact/dense representations resulting in a smaller feature vector. Hence, the poorer performance of Runs 1--4 is unlikely to be due to the switch from ngrams to embeddings. While there is no consensus on whether oversampling or cost-sensitive learning works better for unbalanced datasets  \cite[for example]{Weiss.McCarthy.ea-07,Wallace.Small.ea-11}, oversampling does not seem to be useful for this problem. At the same time, the chosen weighted classification which automatically adjusts weights in inverse proportion to the class frequencies does not seem to be the best solution either as it seems strongly biased towards the least represented class (crisis), while neglecting other non-majority classes. Among the feature representations, adding sentiment lexicon features resulted in better performance for the overall classification, and for identifying "crisis" categories accurately. 
+
+Overall, no classifier/feature representation suited all the categories. So, the next step is to explore classifier ensembles which is a common method followed in text classification. Additionally, exploring the use of sentiment lexicons further, doing better pre-processing that suits social media texts, improving on the embedding representations and leveraging on the annotation guidelines to improve classification results form a part of the future work.
+
+\bibliographystyle{apalike}
+\bibliography{bibliography}
 
 \end{document}
